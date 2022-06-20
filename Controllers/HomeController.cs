@@ -11,9 +11,9 @@ namespace RestaurantApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IRestaurantServices _restaurantServices;
 
-        public HomeController(ILogger<HomeController> logger, IRestaurantServices restaurantServices)
+        public HomeController(IRestaurantServices restaurantServices)
         {
-            _logger = logger;
+
             _restaurantServices = restaurantServices;
         }
 
@@ -26,11 +26,11 @@ namespace RestaurantApp.Controllers
         public IActionResult Restaurants(RestaurantRequestModel _requestModel)
         {
 
-
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             ViewData["location"] = _requestModel.Location;
 
             var result = _restaurantServices.GetRestaurantLists(_requestModel);
-            var data = result.Result.Take(20);
+            var data = result.Result.ToList().Take(20);
             //var responseText = JsonSerializer.Serialize(result.Result, new JsonSerializerOptions { WriteIndented = true });
             return View(data);
         }
